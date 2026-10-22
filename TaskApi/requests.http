@@ -1,0 +1,62 @@
+@host = https://localhost:62643
+@id = 
+
+### 1. Create a task (expecting 201)
+POST {{host}}/tasks
+Content-Type: application/json
+
+{
+  "title": "Buy milk",
+  "priority": "High"
+}
+
+### 2. Create a task with default priority (expect 201, priority = Medium)
+POST {{host}}/tasks
+Content-Type: application/json
+
+{
+  "title": "Default priority task"
+}
+
+### 3. List of all tasks (we expect 200)
+GET {{host}}/tasks
+
+### 4. Complete the task (expect 200, completedAt is full)
+PUT {{host}}/tasks/{{id}}/complete
+
+### 5. End the same task again (expect 409)
+PUT {{host}}/tasks/{{id}}/complete
+
+### 6. Non-existent task (expecting 404)
+PUT {{host}}/tasks/00000000-0000-0000-0000-000000000001/complete
+
+### 7. Empty title with spaces (expect 400)
+POST {{host}}/tasks
+Content-Type: application/json
+
+{
+  "title": "   "
+}
+
+### 8. No title at all (we expect 400)
+POST {{host}}/tasks
+Content-Type: application/json
+
+{
+  "priority": "Low"
+}
+
+### 9. Invalid priority (expecting 400)
+POST {{host}}/tasks
+Content-Type: application/json
+
+{
+  "title": "Bad priority",
+  "priority": "Urgent"
+}
+
+### 10. Delete task (expecting 204)
+DELETE {{host}}/tasks/{{id}}
+
+### 11. Delete already deleted (we expect 404)
+DELETE {{host}}/tasks/{{id}}
